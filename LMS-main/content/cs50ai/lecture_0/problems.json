@@ -1,0 +1,28 @@
+[
+  {
+    "id": "degrees",
+    "title": "Degrees of Separation",
+    "description": "Write a program that determines how many degrees of separation apart two actors are using BFS. Given any two actors, your program should find the shortest path between them through shared movies. Each node is a person, each edge is a movie they share. Your BFS must find the shortest path.",
+    "check50_slug": "cs50/problems/2023/ai/degrees",
+    "difficulty": "medium",
+    "common_mistakes": [
+      "Not tracking visited nodes, causing infinite loops",
+      "Using a stack (DFS) instead of a queue (BFS), which does not guarantee shortest path",
+      "Not correctly reconstructing the path once the target is found",
+      "Returning None instead of an empty list when no path exists"
+    ]
+  },
+  {
+    "id": "tictactoe",
+    "title": "Tic-Tac-Toe",
+    "description": "Using Minimax, implement an AI to play Tic-Tac-Toe optimally. Implement the player, actions, result, winner, terminal, utility, and minimax functions in tictactoe.py. The AI should never lose.",
+    "check50_slug": "cs50/problems/2023/ai/tictactoe",
+    "difficulty": "medium",
+    "common_mistakes": [
+      "Minimax returning the wrong value for terminal states",
+      "Not handling the draw state — terminal() must return True when the board is full",
+      "Modifying the board in place instead of returning a new board from result()",
+      "Confusing which player maximizes and which minimizes"
+    ]
+  }
+]

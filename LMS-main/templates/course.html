@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="course-page">
+    <a href="{{ url_for('index') }}" class="btn-logout" style="display:inline-block; margin-bottom: 20px;">&larr; Back to Courses</a>
+    <h1>Course: {{ course_id.upper() }}</h1>
+    
+    <div class="mt-4">
+        <h2>Lectures</h2>
+        <div class="card-grid" style="margin-top: 15px;">
+            {% for lecture in lectures %}
+            <a href="/lecture/{{ course_id }}/{{ lecture.id }}" class="card course-card">
+                <h3>{{ lecture.title }}</h3>
+                <p style="margin-top: 10px; color: var(--accent-color);">View Lecture Notes &rarr;</p>
+            </a>
+            {% endfor %}
+            {% if not lectures %}
+            <p>No lectures available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 72" role="img" aria-labelledby="title">
+  <title id="title">Fraylon Academy</title>
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="8" width="56" height="56" rx="12" fill="url(#g)" opacity="0.95"/>
+  <text x="18" y="48" font-family="DM Sans,system-ui,sans-serif" font-size="28" font-weight="700" fill="#0c1222">FA</text>
+  <text x="72" y="46" font-family="DM Sans,system-ui,sans-serif" font-size="26" font-weight="600" fill="#f1f5f9">Fraylon</text>
+  <text x="72" y="62" font-family="DM Sans,system-ui,sans-serif" font-size="11" font-weight="500" letter-spacing="0.08em" fill="#94a3b8">ACADEMY</text>
+</svg>

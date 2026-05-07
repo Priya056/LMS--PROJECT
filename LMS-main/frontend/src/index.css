@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --color-fa-bg: #0c1222;
+  --color-fa-surface: #141c30;
+  --color-fa-border: #243046;
+  --color-fa-accent: #3b82f6;
+  --color-fa-accent-dim: #1d4ed8;
+  --color-fa-muted: #94a3b8;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: linear-gradient(160deg, #0c1222 0%, #0a1628 45%, #0d1a2d 100%);
+  color: #e2e8f0;
+  min-height: 100vh;
+}

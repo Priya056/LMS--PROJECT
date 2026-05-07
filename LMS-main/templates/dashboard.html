@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard">
+    <h1>Your Dashboard</h1>
+    
+    <div class="stats-grid">
+        <div class="card stat-card">
+            <h3>Attempted</h3>
+            <div class="stat-value">{{ attempted }}</div>
+        </div>
+        <div class="card stat-card">
+            <h3>Solved</h3>
+            <div class="stat-value">{{ solved }}</div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <h2>Recent Submissions</h2>
+        {% if submissions %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Problem ID</th>
+                    <th>Status</th>
+                    <th>Tests</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in submissions %}
+                <tr>
+                    <td>{{ sub.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ sub.problem_id }}</td>
+                    <td>
+                        <span class="badge badge-{{ 'pass' if sub.passed else 'fail' }}">
+                            {{ 'PASSED' if sub.passed else 'FAILED' }}
+                        </span>
+                    </td>
+                    <td>{{ sub.tests_passed }} / {{ sub.tests_passed + sub.tests_failed }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No submissions yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

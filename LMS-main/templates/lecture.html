@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="root"></div>
+
+<script>
+    window.LECTURE_NOTES = {{ notes | tojson }};
+    window.LECTURE_PROBLEMS = {{ problems | tojson }};
+    window.COURSE_ID = {{ course_id | tojson }};
+    window.LECTURE_ID = {{ lecture_id | tojson }};
+</script>
+
+{% raw %}
+<script type="text/babel">
+    function App() {
+        const [data, setData] = React.useState({ notes: window.LECTURE_NOTES, problems: window.LECTURE_PROBLEMS });
+        const courseId = window.COURSE_ID;
+        const lectureId = window.LECTURE_ID;
+
+        React.useEffect(() => {
+            // Render markdown safely
+            if (data.notes) {
+                document.getElementById('notes-content').innerHTML = marked.parse(data.notes);
+            }
+        }, [data.notes]);
+
+        return (
+            <div className="lecture-page">
+                <div className="card notes-card">
+                    <div id="notes-content" className="markdown-body">
+                        {data.notes ? '' : 'No notes available.'}
+                    </div>
+                </div>
+
+                <div className="problems-section mt-4">
+                    <h2>Lecture Problems</h2>
+                    <div className="card-grid">
+                        {data.problems.map(p => (
+                            <a key={p.id} href={`/problem/${courseId}/${lectureId}/${p.slug}`} className="card problem-card">
+                                <h3>{p.title}</h3>
+                                <span className={`badge badge-${p.difficulty}`}>{p.difficulty}</span>
+                            </a>
+                        ))}
+                        {data.problems.length === 0 && <p>No problems found for this lecture.</p>}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+</script>
+{% endraw %}
+{% endblock %}

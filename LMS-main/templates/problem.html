@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="root"></div>
+
+<script>
+    window.PROBLEM_DATA = {{ problem | tojson }};
+</script>
+
+{% raw %}
+<script type="text/babel">
+    function App() {
+        // Use the initial problem data passed from Flask
+        const [problem, setProblem] = React.useState(window.PROBLEM_DATA);
+        const [code, setCode] = React.useState("# Write your code here");
+        const [submitting, setSubmitting] = React.useState(false);
+        const [result, setResult] = React.useState(null);
+        
+        // Mentor Chat State
+        const [chatHistory, setChatHistory] = React.useState([]);
+        const [chatInput, setChatInput] = React.useState("");
+        const [mentorTyping, setMentorTyping] = React.useState(false);
+
+        const problemId = window.PROBLEM_DATA.id;
+
+        React.useEffect(() => {
+            // Initialize Monaco Editor
+            require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.45.0/min/vs' }});
+            require(['vs/editor/editor.main'], function() {
+                window.editor = monaco.editor.create(document.getElementById('monaco-container'), {
+                    value: "# Write your code here\n",
+                    language: 'python',
+                    theme: 'vs-dark',
+                    minimap: { enabled: false }
+                });
+                
+                window.editor.onDidChangeModelContent(() => {
+                    setCode(window.editor.getValue());
+                });
+            });
+        }, []);
+
+        const sendToMentor = async (studentMessage, submissionData = null) => {
+            setMentorTyping(true);
+            try {
+                const res = await fetch('/mentor', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        problem_id: problemId,
+                        student_message: studentMessage,
+                        submission: submissionData
+                    })
+                });
+                const data = await res.json();
+                
+                setChatHistory(prev => [...prev, { role: 'mentor', text: data.mentor_reply }]);
+            } catch (err) {
+                console.error(err);
+                setChatHistory(prev => [...prev, { role: 'mentor', text: "Error communicating with mentor." }]);
+            }
+            setMentorTyping(false);
+        };
+
+        const handleSubmit = async () => {
+            if (submitting) return;
+            setSubmitting(true);
+            setResult(null);
+            
+            try {
+                const res = await fetch('/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        problem_id: problemId,
+                        code: window.editor.getValue()
+                    })
+                });
+                const data = await res.json();
+                
+                const submissionData = {
+                    code: window.editor.getValue(),
+                    passed: data.status === 'pass',
+                    tests_passed: data.tests_passed,
+                    tests_failed: data.tests_failed,
+                    raw_output: data.raw_output
+                };
+                
+                setResult(submissionData);
+                
+                // Add system message about submission to chat
+                setChatHistory(prev => [...prev, { 
+                    role: 'system', 
+                    text: `Submitted code. Result: ${data.status === 'pass' ? 'PASSED' : 'FAILED'} (${data.tests_passed} passed, ${data.tests_failed} failed)` 
+                }]);
+                
+                // Trigger mentor response automatically
+                await sendToMentor("", submissionData);
+                
+            } catch (err) {
+                console.error(err);
+                alert("Error submitting code");
+            }
+            setSubmitting(false);
+        };
+
+        const handleChatSubmit = (e) => {
+            e.preventDefault();
+            if (!chatInput.trim() || mentorTyping) return;
+            
+            const msg = chatInput;
+            setChatInput("");
+            setChatHistory(prev => [...prev, { role: 'user', text: msg }]);
+            
+            sendToMentor(msg, result); // Pass current result context if any
+        };
+
+        if (!problem) return <div>Loading problem...</div>;
+
+        return (
+            <div className="problem-layout">
+                <div className="problem-main">
+                    <div className="card problem-desc">
+                        <h2>{problem.title}</h2>
+                        <span className={`badge badge-${problem.difficulty}`}>{problem.difficulty}</span>
+                        <div className="mt-2 text-pre-wrap">{problem.description}</div>
+                    </div>
+
+                    <div className="editor-section card mt-4">
+                        <div id="monaco-container" style={{ height: "400px", width: "100%" }}></div>
+                        <div className="editor-actions mt-2">
+                            <button className="btn btn-primary" onClick={handleSubmit} disabled={submitting}>
+                                {submitting ? "Running check50..." : "Submit Code"}
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {result && (
+                        <div className={`card mt-4 result-card result-${result.passed ? 'pass' : 'fail'}`}>
+                            <h3>Check50 Result: {result.passed ? '✅ Passed' : '❌ Failed'}</h3>
+                            <p>Tests Passed: {result.tests_passed} | Tests Failed: {result.tests_failed}</p>
+                            <details>
+                                <summary>View Raw Output</summary>
+                                <pre className="raw-output">{result.raw_output}</pre>
+                            </details>
+                        </div>
+                    )}
+                </div>
+
+                <div className="mentor-panel card">
+                    <div className="mentor-header">
+                        <h3>Fraylon Mentor</h3>
+                        <p className="mentor-subtitle">Your AI Coding Tutor</p>
+                    </div>
+                    
+                    <div className="chat-history">
+                        {chatHistory.length === 0 && (
+                            <div className="chat-empty">Ask the mentor a question or submit your code to get feedback.</div>
+                        )}
+                        {chatHistory.map((msg, i) => (
+                            <div key={i} className={`chat-message chat-${msg.role}`}>
+                                {msg.role === 'mentor' && <strong>Mentor: </strong>}
+                                {msg.role === 'user' && <strong>You: </strong>}
+                                <span>{msg.text}</span>
+                            </div>
+                        ))}
+                        {mentorTyping && <div className="chat-message chat-mentor"><em>Mentor is typing...</em></div>}
+                    </div>
+                    
+                    <form className="chat-input-form" onSubmit={handleChatSubmit}>
+                        <input 
+                            type="text" 
+                            value={chatInput} 
+                            onChange={(e) => setChatInput(e.target.value)} 
+                            placeholder="Ask a conceptual question..." 
+                            disabled={mentorTyping}
+                        />
+                        <button type="submit" disabled={!chatInput.trim() || mentorTyping} className="btn btn-primary">Send</button>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+</script>
+{% endraw %}
+{% endblock %}

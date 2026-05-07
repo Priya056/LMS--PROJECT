@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="root"></div>
+
+{% raw %}
+<script type="text/babel">
+    function App() {
+        const [courses, setCourses] = React.useState([]);
+
+        React.useEffect(() => {
+            fetch('/courses')
+                .then(res => res.json())
+                .then(data => setCourses(data));
+        }, []);
+
+        return (
+            <div className="course-selection">
+                <h1>Select a Course</h1>
+                <div className="card-grid">
+                    {courses.map(c => (
+                        <a key={c.id} href={`/course/${c.id}`} className="card course-card">
+                            <h2>{c.title}</h2>
+                            <p>Enter Course &rarr;</p>
+                        </a>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+</script>
+{% endraw %}
+{% endblock %}
