@@ -11,9 +11,114 @@
   --color-fa-muted: #94a3b8;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: var(--font-sans);
   background: linear-gradient(160deg, #0c1222 0%, #0a1628 45%, #0d1a2d 100%);
   color: #e2e8f0;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Image and Media Container Styles */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+figure {
+  margin: 1.5rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+figcaption {
+  margin-top: 0.75rem;
+  text-align: center;
+  color: var(--color-fa-muted);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* Prose and Markdown Content */
+.prose, .markdown-content, .markdown-body {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.prose img, .markdown-content img, .markdown-body img {
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 2rem auto !important;
+  border-radius: 0.5rem;
+  display: block;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  object-fit: contain;
+}
+
+.prose details, .markdown-content details, .markdown-body details {
+  margin: 2rem 0;
+  width: 100%;
+}
+
+.prose table, .markdown-content table {
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.prose table td,
+.prose table th,
+.markdown-content table td,
+.markdown-content table th {
+  padding: 0.75rem;
+  border: 1px solid var(--color-fa-border);
+}
+
+/* Container constraints */
+.container-constrained {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Responsive padding and margins */
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+
+  figure img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .prose table, .markdown-content table {
+    font-size: 0.875rem;
+  }
+
+  .prose table td,
+  .prose table th,
+  .markdown-content table td,
+  .markdown-content table th {
+    padding: 0.5rem;
+  }
 }

@@ -34,11 +34,16 @@
                 <div className="problems-section mt-4">
                     <h2>Lecture Problems</h2>
                     <div className="card-grid">
-                        {data.problems.map(p => (
-                            <a key={p.id} href={`/problem/${courseId}/${lectureId}/${p.slug}`} className="card problem-card">
-                                <h3>{p.title}</h3>
-                                <span className={`badge badge-${p.difficulty}`}>{p.difficulty}</span>
-                            </a>
+                        {data.problems.map((p, index) => (
+                            <div key={p.id} className="card problem-card-detailed mb-4">
+                                <div className="problem-header d-flex justify-content-between align-items-center">
+                                    <h3>Problem {index + 1}: {p.title}</h3>
+                                    <span className="badge badge-easy" style={{ backgroundColor: '#28a745', color: 'white' }}>{p.difficulty}</span>
+                                </div>
+                                <div className="problem-body markdown-body mt-3 mb-3" dangerouslySetInnerHTML={{ __html: marked.parse(p.description) }}>
+                                </div>
+                                <a href={`/problem/${courseId}/${lectureId}/${p.slug}`} className="btn btn-primary">Solve Problem</a>
+                            </div>
                         ))}
                         {data.problems.length === 0 && <p>No problems found for this lecture.</p>}
                     </div>

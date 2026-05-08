@@ -84,6 +84,29 @@ If you are running the Flask app directly on Windows, the `runner.py` subprocess
 
 ---
 
+## ✅ Running Check50 Tests
+
+To verify that the LMS is functioning correctly, you can run the automated check50 checks. These checks verify:
+
+- ✓ App starts without errors
+- ✓ Login and Register endpoints return 200
+- ✓ Database initializes correctly
+- ✓ User registration and login flows work correctly
+- ✓ Protected endpoints require authentication
+
+### Running the Checks
+
+To run the checks remotely using the check50 CLI:
+```bash
+check50 Priya056/LMS--PROJECT/main
+```
+
+### Check50 Configuration
+
+The checks are configured in `.check50.yaml` at the project root. The entry point is `checks/`, which uses the tests defined in `checks/__init__.py`.
+
+---
+
 ## 🧠 The Fraylon Mentor (anti-gravity)
 
 The Fraylon Mentor is configured to:

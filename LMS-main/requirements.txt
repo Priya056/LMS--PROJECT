@@ -4,4 +4,6 @@ flask-sqlalchemy
 werkzeug
 gunicorn
 anthropic
-check50
+pytest
+pytest-flask
+pytest-cov

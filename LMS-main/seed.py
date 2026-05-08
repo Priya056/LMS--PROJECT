@@ -31,11 +31,11 @@ def seed_database():
                             problems = json.load(f)
                             for p_data in problems:
                                 existing = Problem.query.filter_by(slug=p_data['id'], course=course_id).first()
+                                
+                                mistakes = p_data.get('common_mistakes', [])
+                                mistakes_json = json.dumps(mistakes)
+
                                 if not existing:
-                                    # Serialize common_mistakes to JSON string as required
-                                    mistakes = p_data.get('common_mistakes', [])
-                                    mistakes_json = json.dumps(mistakes)
-                                    
                                     problem = Problem(
                                         course=course_id,
                                         lecture_id=lecture_id,
@@ -43,10 +43,16 @@ def seed_database():
                                         title=p_data['title'],
                                         description=p_data['description'],
                                         check50_slug=p_data['check50_slug'],
-                                        difficulty=p_data.get('difficulty', 'medium'),
+                                        difficulty=p_data.get('difficulty', 'Easy'),
                                         common_mistakes=mistakes_json
                                     )
                                     db.session.add(problem)
+                                else:
+                                    existing.title = p_data['title']
+                                    existing.description = p_data['description']
+                                    existing.check50_slug = p_data['check50_slug']
+                                    existing.difficulty = p_data.get('difficulty', 'Easy')
+                                    existing.common_mistakes = mistakes_json
                         except json.JSONDecodeError:
                             print(f"Error decoding JSON in {problems_file}")
                             
